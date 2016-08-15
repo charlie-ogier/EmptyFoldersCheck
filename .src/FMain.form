@@ -1,0 +1,53 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,79,75)
+  Icon = Picture["empty.png"]
+  Arrangement = Arrange.Vertical
+  Padding = 10
+  { Panel4 HBox
+    MoveScaled(3,1,73,7)
+    { Label1 Label
+      MoveScaled(0,0,72,7)
+      Expand = True
+      Text = ("This program looks for 5 specific Gambas folders\n.action, .scr, .lang, .gambas, .hidden and checks if the folders are empty.\nSelect the folder to check and click the 'Correct' button.\nThe button will not be enabled if the correct folders do not exist.")
+    }
+  }
+  { Panel3 Panel
+    MoveScaled(18,9,32,0.7143)
+  }
+  { DirChooser1 DirChooser
+    MoveScaled(6,11,67,40)
+    Expand = True
+  }
+  { Panel5 Panel
+    MoveScaled(21,51,32,0.7143)
+  }
+  { HBox2 HBox
+    MoveScaled(7,52,61,4)
+    { LabelDisplay Label
+      MoveScaled(2,0,46,4)
+    }
+  }
+  { Panel2 Panel
+    MoveScaled(17,60,32,0.7143)
+  }
+  { HBox1 HBox
+    MoveScaled(3,61,66,4)
+    { ButtonCorrect Button
+      MoveScaled(5,0,16,4)
+      Enabled = False
+      ToolTip = ("This will put a file in the empty Gambas folders")
+      Text = Shortcut(("Correct"), "C")
+    }
+    { Panel1 Panel
+      MoveScaled(28,0,14,3)
+      Expand = True
+    }
+    { ButtonExit Button
+      MoveScaled(47,0,16,4)
+      ToolTip = ("Exit - Bye bye!")
+      Text = Shortcut(("Exit"), "E")
+    }
+  }
+}

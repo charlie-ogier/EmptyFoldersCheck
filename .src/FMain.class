@@ -1,0 +1,87 @@
+' Gambas class file
+
+'15/08/16 Version 0.1.0 
+'
+' GitHub empty folders check
+' To check for empty folders in Gambas folders to prevent commit errors from GitHub
+' 
+' Copyright (C) Charlie Ogier (C) 2016
+'
+' This program is free software; you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation; either version 2 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program; if not, write to the Free Software
+' Foundation, Inc., 51 Franklin St, Fifth Floor, 
+' Boston, MA  02110-1301  USA
+'
+Public sFoldersToCheck As String[] = [".action", ".src", ".hidden", ".gambas", ".lang"] 'List of Gambas folders to check
+
+Public Sub Form_Open()
+
+Try DirChooser1.SelectedPath = Settings["StoredSelectedPath"]                           'Get last folder looked at
+
+End
+
+Public Sub ButtonCorrect_Click()                                                        'What to do if the 'Correct' button is clicked
+Dim sSelectedFolder, sLSStore, sFolderList As String                                    'Holds the selected folder, the list of files in the folder, a list of empty folders
+Dim siCount, siTotal As Short                                                           'Counters
+
+sSelectedFolder = DirChooser1.SelectedPath                                              'Holds the selected folder
+
+For siCount = 0 To 4                                                                    'Loop 5 times, once for each folder
+  Shell "ls " &/ sSelectedFolder &/ sFoldersToCheck[siCount] To sLSStore                'Store any files in the folder in sLSStore
+
+  If sLSStore = "" Then                                                                 'If the string is empty, the folder is empty
+    Copy "empty.txt" To sSelectedFolder &/ sFoldersToCheck[siCount] &/ "empty.txt"      'Copy the 'empty.txt' file from this program's folder to the empty folder
+    sFolderList &= sFoldersToCheck[siCount] & ", "                                      'Add the folder to the list to display
+    Inc siTotal                                                                         'Increase the count of empty folders found
+  Endif
+
+Next
+
+sFolderList = Left(sFolderList, Len(sFolderList) - 2)                                   'Gets rid of the last ", " in sFolderList
+Message.Info(Str(siTotal) & " empty files have been created in folders\n" & sFolderList, "OK") 'Puts up a message about what's happened
+DirChooser1_Change                                                                      'Check this folder again so that the amount of empty folders is corrected
+
+End
+
+Public Sub DirChooser1_Change()                                                         'What happens when a new folder is selected
+Dim siCount, siTotal, siEmpty As Short                                                  'Counters
+Dim sSelectedFolder, sLSStore As String                                                 'Holds the selected folder, the list of files in the folder
+
+sSelectedFolder = DirChooser1.SelectedPath                                              'Holds the selected folder
+
+For siCount = 0 To 4                                                                    'Loop 5 times, once for each folder
+  If Exist(sSelectedFolder &/ sFoldersToCheck[siCount]) Then Inc siTotal                'Check if the folders exist
+Next
+
+If siTotal = 5 Then                                                                     'If all 5 of the folders exist then..
+  ButtonCorrect.Enabled = True                                                          'Enable the 'Correct' button
+  For siCount = 0 To 4                                                                  'Loop 5 times, once for each folder
+    Shell "ls " &/ sSelectedFolder &/ sFoldersToCheck[siCount] To sLSStore              'Store any files in the folder in sLSStore
+    If sLSStore = "" Then Inc siEmpty                                                   'If the folder is empty increase the count
+  Next
+Else                                                                                    'Else..
+  ButtonCorrect.Enabled = False                                                         'Disable the 'Correct' button
+End If
+
+LabelDisplay.text = "This folder has " & Str(siEmpty) & " empty folders"                'Display the amount of empty folders found
+If siEmpty = 0 Then ButtonCorrect.Enabled = False                                       'Disable the 'Correct' button if there are no empty folders
+
+End
+
+Public Sub ButtonExit_Click()                                                           'What to do when the 'Exit' button is clicked
+
+Settings["StoredSelectedPath"] = DirChooser1.SelectedPath                               'Store the last folder
+
+Me.Close                                                                                'Close the program
+
+End
